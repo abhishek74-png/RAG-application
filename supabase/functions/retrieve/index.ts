@@ -9,20 +9,28 @@ declare const Deno: any;
 
 function getCorsHeaders(req: Request) {
   const origin = req.headers.get("Origin") || "";
-  const prodOrigin = Deno.env.get("ALLOWED_ORIGIN");
-  
+
   const allowedOrigins = [
     "http://localhost:5173",
     "http://localhost:5174",
-    ...(prodOrigin ? [prodOrigin] : [])
+    "https://ragapplic.netlify.app",
   ];
 
-  const allowOrigin = allowedOrigins.includes(origin) ? origin : allowedOrigins[0];
+  // Also allow Netlify deploy/preview URLs for this site
+  const isNetlifyPreview =
+    origin.endsWith(".ragapplic.netlify.app");
+
+  const allowOrigin =
+    allowedOrigins.includes(origin) || isNetlifyPreview
+      ? origin
+      : "https://ragapplic.netlify.app";
 
   return {
     "Access-Control-Allow-Origin": allowOrigin,
-    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Access-Control-Allow-Headers":
+      "authorization, x-client-info, apikey, content-type",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Vary": "Origin",
   };
 }
 
