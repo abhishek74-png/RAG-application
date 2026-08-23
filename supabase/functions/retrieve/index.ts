@@ -16,9 +16,9 @@ function getCorsHeaders(req: Request) {
     "https://ragapplic.netlify.app",
   ];
 
-  // Also allow Netlify deploy/preview URLs for this site
+  // Netlify deploy-preview / agent URLs
   const isNetlifyPreview =
-    origin.endsWith(".ragapplic.netlify.app");
+    /^https:\/\/[a-z0-9-]+--ragapplic\.netlify\.app$/i.test(origin);
 
   const allowOrigin =
     allowedOrigins.includes(origin) || isNetlifyPreview
@@ -30,7 +30,6 @@ function getCorsHeaders(req: Request) {
     "Access-Control-Allow-Headers":
       "authorization, x-client-info, apikey, content-type",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Vary": "Origin",
   };
 }
 
